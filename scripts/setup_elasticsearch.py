@@ -24,7 +24,8 @@ ES_INDEX = os.getenv("ELASTICSEARCH_INDEX", "banking_transactions")
 def get_es_client():
     """Initialize Elasticsearch client"""
     # For cloud instances, use proper certificate verification
-    verify_certs = "cloud.es.io" in ES_HOST or "elastic-cloud.com" in ES_HOST
+    # verify_certs = "cloud.es.io" in ES_HOST or "elastic-cloud.com" in ES_HOST
+    verify_certs = False
     
     if ES_API_KEY:
         return Elasticsearch(
