@@ -24,7 +24,22 @@ load_dotenv()
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, project_root)
 
-from src.server.server import search_transactions, get_transaction_summary, health_check, TransactionSearchParams
+# Import the MCP server module to access the tools
+import src.server.server as server_module
+from src.server.server import TransactionSearchParams
+
+# Access the underlying functions from the MCP tools
+def search_transactions(params):
+    """Wrapper to call the MCP tool function"""
+    return server_module.search_transactions.fn(params)
+
+def get_transaction_summary(**kwargs):
+    """Wrapper to call the MCP tool function"""
+    return server_module.get_transaction_summary.fn(**kwargs)
+
+def health_check():
+    """Wrapper to call the MCP tool function"""
+    return server_module.health_check.fn()
 
 # Configure Streamlit page
 st.set_page_config(
@@ -475,14 +490,7 @@ def main():
                 st.error("❌ Please set OPEN_AI_KEY in your .env file")
             else:
                 try:
-                    import httpx
-                    client = openai.OpenAI(
-                        api_key=st.session_state.llm_chatbot.openai_api_key,
-                        http_client=httpx.Client(
-                            timeout=30.0,
-                            limits=httpx.Limits(max_connections=10, max_keepalive_connections=5)
-                        )
-                    )
+                    client = openai.OpenAI(api_key=st.session_state.llm_chatbot.openai_api_key)
                     models = client.models.list()
                     st.success("✅ Connected to OpenAI!")
                     st.info(f"📝 Using model: {st.session_state.llm_chatbot.openai_model}")

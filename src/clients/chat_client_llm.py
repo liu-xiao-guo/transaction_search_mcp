@@ -20,7 +20,22 @@ import plotly.graph_objects as go
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, project_root)
 
-from src.server.server import search_transactions, get_transaction_summary, health_check, TransactionSearchParams
+# Import the MCP server module to access the tools
+import src.server.server as server_module
+from src.server.server import TransactionSearchParams
+
+# Access the underlying functions from the MCP tools
+def search_transactions(params):
+    """Wrapper to call the MCP tool function"""
+    return server_module.search_transactions.fn(params)
+
+def get_transaction_summary(**kwargs):
+    """Wrapper to call the MCP tool function"""
+    return server_module.get_transaction_summary.fn(**kwargs)
+
+def health_check():
+    """Wrapper to call the MCP tool function"""
+    return server_module.health_check.fn()
 
 # Configure Streamlit page
 st.set_page_config(
