@@ -490,7 +490,14 @@ def main():
                 st.error("❌ Please set OPEN_AI_KEY in your .env file")
             else:
                 try:
-                    client = openai.OpenAI(api_key=st.session_state.llm_chatbot.openai_api_key)
+                    import httpx
+                    client = openai.OpenAI(
+                        api_key=st.session_state.llm_chatbot.openai_api_key,
+                        http_client=httpx.Client(
+                            timeout=30.0,
+                            limits=httpx.Limits(max_connections=10, max_keepalive_connections=5)
+                        )
+                    )
                     models = client.models.list()
                     st.success("✅ Connected to OpenAI!")
                     st.info(f"📝 Using model: {st.session_state.llm_chatbot.openai_model}")
